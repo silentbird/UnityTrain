@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class RotationDiagram2D : MonoBehaviour
@@ -20,10 +17,9 @@ public class RotationDiagram2D : MonoBehaviour
         public float X;
         public float ScaleTimes;
         public int OrderId;
-        public int ItemIdx;
     }
 
-    public struct ItemOrderData
+    private struct ItemOrderData
     {
         public int ItemIdx;
         public int OrderId;
@@ -38,15 +34,17 @@ public class RotationDiagram2D : MonoBehaviour
 
     private void InitPosData()
     {
-        for (int i = 0; i < ImageSprites.Length; i++)
+        for (var i = 0; i < ImageSprites.Length; i++)
         {
-            ItemPositionData posData = new ItemPositionData();
-            float length = (20 + SizeData.x) * _ListRotationDiagram.Count;
+            var posData = new ItemPositionData();
+            var length = (20 + SizeData.x) * _ListRotationDiagram.Count;
         }
+
         CalculatePosData(0f);
     }
 
     private float tmpMove = 0f;
+
     private void Update()
     {
         tmpMove += 0.001f;
@@ -56,7 +54,7 @@ public class RotationDiagram2D : MonoBehaviour
 
     private GameObject CreateTemplate()
     {
-        GameObject template = new GameObject("Template");
+        var template = new GameObject("Template");
         template.AddComponent<RectTransform>().sizeDelta = SizeData;
         template.AddComponent<Image>();
         template.AddComponent<RotationDiagramItem>();
@@ -65,7 +63,7 @@ public class RotationDiagram2D : MonoBehaviour
 
     private void CreateItems()
     {
-        GameObject template = CreateTemplate();
+        var template = CreateTemplate();
         RotationDiagramItem temp = null;
         _ListRotationDiagram = new List<RotationDiagramItem>();
         foreach (var sprite in ImageSprites)
@@ -79,31 +77,31 @@ public class RotationDiagram2D : MonoBehaviour
         Destroy(template);
     }
 
-    
+
     //moveRadio:0-1
     private void CalculatePosData(float moveRadio)
     {
-        List<ItemOrderData> tmpOrderData = new List<ItemOrderData>();
+        var tmpOrderData = new List<ItemOrderData>();
         _ListItemPosData = new List<ItemPositionData>();
-        float radioOffset = 1f / ImageSprites.Length;
-        float radio = moveRadio - Mathf.Floor(moveRadio);
+        var radioOffset = 1f / ImageSprites.Length;
+        var radio = moveRadio - Mathf.Floor(moveRadio);
 
-        for (int i = 0; i < ImageSprites.Length; i++)
+        for (var i = 0; i < ImageSprites.Length; i++)
         {
-            ItemPositionData posData = new ItemPositionData();
-            float length = (20 + SizeData.x) * _ListRotationDiagram.Count;
+            var posData = new ItemPositionData();
+            var length = (20 + SizeData.x) * _ListRotationDiagram.Count;
             posData.X = GetX(radio, length);
             posData.ScaleTimes = GetScaleTimes(radio, ScaleTimeMax, ScaleTimeMin);
             radio += radioOffset;
             _ListItemPosData.Add(posData);
             //临时order list
-            ItemOrderData orderData = new ItemOrderData();
+            var orderData = new ItemOrderData();
             orderData.ItemIdx = i;
             tmpOrderData.Add(orderData);
         }
 
         tmpOrderData = tmpOrderData.OrderBy(u => _ListItemPosData[u.ItemIdx].ScaleTimes).ToList();
-        for (int i = 0; i < tmpOrderData.Count; i++)
+        for (var i = 0; i < tmpOrderData.Count; i++)
         {
             _ListItemPosData[tmpOrderData[i].ItemIdx].OrderId = i;
         }
@@ -112,7 +110,7 @@ public class RotationDiagram2D : MonoBehaviour
 
     private void SetPosData()
     {
-        for (int i = 0; i < _ListRotationDiagram.Count; i++)
+        for (var i = 0; i < _ListRotationDiagram.Count; i++)
         {
             _ListRotationDiagram[i].SetPosData(_ListItemPosData[i]);
         }
@@ -145,6 +143,4 @@ public class RotationDiagram2D : MonoBehaviour
             return min + (max - min) * (radio - 0.5f) / 0.5f;
         }
     }
-
-
 }
